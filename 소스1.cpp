@@ -1,26 +1,26 @@
 #include <stdio.h>
 
 int main() {
-    int product_count;  // »óÇ° Á¾·ù °³¼ö
-    int stock[100];     // ÀÔ°í ¼ö·® ¹è¿­
-    int sold[100];      // ÆÇ¸Å ¼ö·® ¹è¿­
-    int remaining[100]; // Àç°í ¼ö·® ¹è¿­
-    int id;             // Á¶È¸ÇÒ »óÇ° ID
+    int product_count;
+    int stock[100];
+    int sold[100];
+    int remaining[100];
+    int id;
 
-    printf("»óÇ° °³¼ö¸¦ ÀÔ·ÂÇÏ¼¼¿ä (1 ~ 100): ");
+    printf("ìƒí’ˆ ê°œìˆ˜ë¥¼ ì…ë ¥í•˜ì„¸ìš” (1 ~ 100): ");
     scanf("%d", &product_count);
 
     if (product_count < 1 || product_count > 100) {
-        printf("Àß¸øµÈ »óÇ° °³¼öÀÔ´Ï´Ù.\n");
+        printf("ì˜ëª»ëœ ìƒí’ˆ ê°œìˆ˜ì…ë‹ˆë‹¤.\n");
         return 1;
     }
 
-    printf("°¢ »óÇ°ÀÇ ÀÔ°í ¼ö·®À» ÀÔ·ÂÇÏ¼¼¿ä: ");
+    printf("ê° ìƒí’ˆì˜ ì…ê³  ìˆ˜ëŸ‰ì„ ì…ë ¥í•˜ì„¸ìš”: ");
     for (int i = 0; i < product_count; i++) {
         scanf("%d", &stock[i]);
     }
 
-    printf("°¢ »óÇ°ÀÇ ÆÇ¸Å ¼ö·®À» ÀÔ·ÂÇÏ¼¼¿ä: ");
+    printf("ê° ìƒí’ˆì˜ íŒë§¤ ìˆ˜ëŸ‰ì„ ì…ë ¥í•˜ì„¸ìš”: ");
     for (int i = 0; i < product_count; i++) {
         scanf("%d", &sold[i]);
     }
@@ -29,17 +29,17 @@ int main() {
         remaining[i] = stock[i] - sold[i];
     }
 
-    printf("Á¶È¸ÇÒ »óÇ° ID¸¦ ÀÔ·ÂÇÏ¼¼¿ä (1~100): ");
+    printf("ì¡°íšŒí•  ìƒí’ˆ IDë¥¼ ì…ë ¥í•˜ì„¸ìš” (1~100): ");
     scanf("%d", &id);
 
     if (id < 1 || id > product_count) {
-        printf("Àß¸øµÈ »óÇ° IDÀÔ´Ï´Ù.\n");
+        printf("ì˜ëª»ëœ ìƒí’ˆ IDì…ë‹ˆë‹¤.\n");
     }
     else {
-        printf("ID %d¿¡ ÇØ´çÇÏ´Â »óÇ°ÀÇ Àç°í ¼ö·®: %d\n", id, remaining[id - 1]);
+        printf("ID %dì— í•´ë‹¹í•˜ëŠ” ìƒí’ˆì˜ ì¬ê³  ìˆ˜ëŸ‰: %d\n", id, remaining[id - 1]);
     }
 
-    printf("ÀüÃ¼ »óÇ°ÀÇ Àç°í ¼ö·®: ");
+    printf("ì „ì²´ ìƒí’ˆì˜ ì¬ê³  ìˆ˜ëŸ‰: ");
     for (int i = 0; i < product_count; i++) {
         printf("%d ", remaining[i]);
     }
