@@ -1,0 +1,98 @@
+#include <stdio.h>
+
+int main() {
+    int product_count = 0;
+    int stock[100] = {0};
+    int sold[100] = {0};
+    int remaining[100] = {0};
+    int totalsold = 0;
+    int totalstock = 0;
+    double sales_volume = 0.0;
+    int menunum;
+
+    printf("[쇼핑몰 관리 프로그램]\n");
+
+    do {
+        printf("원하는 메뉴를 선택하세요.(1.입고, 2.판매, 3.상품현황, 4.종료)\n");
+        scanf("%d", &menunum);
+        
+        switch (menunum) {
+            case 1:
+                printf("입고수량 입력: 전체상품입고수량 입력 1, 개별상품 입력 2를 입력\n");
+                int input_type;
+                scanf("%d", &input_type);
+
+                if (input_type == 1) {
+                    printf("입고 수량을 입력하세요: ");
+                    for (int i = 0; i < 5; i++) {
+                        scanf("%d", &stock[i]);
+                        totalstock += stock[i];
+                    }
+                } else if (input_type == 2) {
+                    printf("상품 ID: ");
+                    int product_id;
+                    scanf("%d", &product_id);
+
+                    printf("입고수량: ");
+                    int incoming_stock;
+                    scanf("%d", &incoming_stock);
+                    stock[product_id - 1] += incoming_stock;
+                    totalstock += incoming_stock;
+                } else {
+                    printf("잘못된 입력입니다.\n");
+                }
+                break;
+
+            case 2:
+                printf("판매수량 입력: 전체상품판매수량 입력 1, 개별상품 입력 2를 입력\n");
+                scanf("%d", &input_type);
+
+                if (input_type == 1) {
+                    printf("판매 수량을 입력하세요: ");
+                    for (int i = 0; i < 5; i++) {
+                        scanf("%d", &sold[i]);
+                        totalsold += sold[i];
+                    }
+                } else if (input_type == 2) {
+                    printf("상품 ID: ");
+                    int product_id;
+                    scanf("%d", &product_id);
+
+                    printf("판매수량: ");
+                    int sale_quantity;
+                    scanf("%d", &sale_quantity);
+                    sold[product_id - 1] += sale_quantity;
+                    totalsold += sale_quantity;
+                } else {
+                    printf("잘못된 입력입니다.\n");
+                }
+                break;
+
+            case 3:
+                for (int i = 0; i < 5; i++) {
+                    remaining[i] = stock[i] - sold[i];
+                }
+
+                sales_volume = (totalstock > 0) ? (double)totalsold / totalstock * 100 : 0.0;
+
+                printf("재고수량: ");
+                for (int i = 0; i < 5; i++) {
+                    printf("%d ", remaining[i]);
+                }
+                printf("\n");
+                
+                printf("총 판매량: %d (판매율 %.2f%%)\n", totalsold, sales_volume);
+                break;
+
+            case 4:
+                printf("프로그램을 종료합니다.\n");
+                break;
+
+            default:
+                printf("잘못된 메뉴 선택입니다. 다시 시도하세요.\n");
+                break;
+        }
+    } while (menunum != 4);
+
+    return 0;
+}
