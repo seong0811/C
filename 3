@@ -1,0 +1,70 @@
+#include <stdio.h>
+
+int main() {
+    int product_count;
+    int stock[100];
+    int sold[100];
+    int remaining[100];
+    int best_id = 0, worst_id = 0;
+    int totalsold = 0, totalstock = 0;
+    double sales_volume;
+
+    printf("상품 개수를 입력하세요 (1 ~ 100): ");
+    scanf("%d", &product_count);
+
+    if (product_count < 1 || product_count > 100) {
+        printf("잘못된 상품 개수입니다.\n");
+        return 1;
+    }
+
+    printf("각 상품의 입고 수량을 입력하세요: ");
+    for (int i = 0; i < product_count; i++) {
+        scanf("%d", &stock[i]);
+        totalstock += stock[i];
+    }
+
+    printf("각 상품의 판매 수량을 입력하세요: ");
+    for (int i = 0; i < product_count; i++) {
+        scanf("%d", &sold[i]);
+        totalsold += sold[i];
+    }
+
+    for (int i = 0; i < product_count; i++) {
+        remaining[i] = stock[i] - sold[i];
+    }
+
+    if (totalsold > 0) {
+        sales_volume = (double)totalsold / totalstock * 100;
+    } else {
+        sales_volume = 0.0; // To avoid division by zero
+    }
+
+    printf("전체 상품의 재고 수량: ");
+    for (int i = 0; i < product_count; i++) {
+        printf("%d ", remaining[i]);
+    }
+    printf("\n");
+
+    printf("총 판매량: %d (판매율 %.2f%%)\n", totalsold, sales_volume);
+
+    best_id = worst_id = 0; // Start with the first product
+    for (int i = 1; i < product_count; i++) {
+        if (sold[i] > sold[best_id]) {
+            best_id = i;
+        }
+        if (sold[i] < sold[worst_id]) {
+            worst_id = i;
+        }
+    }
+
+    printf("가장 많이 판매된 상품: ID %d, 판매량 %d\n", best_id + 1, sold[best_id]);
+    printf("가장 적게 판매된 상품: ID %d, 판매량 %d\n", worst_id + 1, sold[worst_id]);
+
+    for (int i = 0; i < product_count; i++) {
+        if (remaining[i] < 0) {
+            printf("상품 ID %d : 재고부족(%d)\n", i + 1, -remaining[i]);
+        }
+    }
+
+    return 0;
+}
