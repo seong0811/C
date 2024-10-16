@@ -1,0 +1,220 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_PRODUCTS 5
+#define MAX_NAME_LEN 100
+
+void clear_input_buffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {}
+}
+
+void print_price(double price) {
+    if (price == (int)price) {
+        printf("%d", (int)price);
+    }
+    else {
+        printf("%.2f", price);
+    }
+}
+
+int main() {
+    int stock[MAX_PRODUCTS] = { 0 };
+    int sold[MAX_PRODUCTS] = { 0 };
+    int remaining[MAX_PRODUCTS] = { 0 };
+    int totalsold = 0;
+    int totalstock = 0;
+    double sales_volume = 0.0;
+    double total_sales_volume = 0.0;
+    char menustr[10];
+    int menunum;
+    char product_names[MAX_PRODUCTS][MAX_NAME_LEN] = { "" };
+    double product_prices[MAX_PRODUCTS] = { 0.0 };
+
+    printf("[쇼핑몰 관리 프로그램]\n");
+
+    do {
+        printf("원하는 메뉴를 선택하세요.(1.입고, 2.판매, 3.개별현황, 4.전체현황, 5.종료)\n");
+        scanf("%s", menustr);
+
+        if (sscanf(menustr, "%d", &menunum) != 1) {
+            printf("잘못된 메뉴 선택입니다. 다시 시도하세요.\n");
+            clear_input_buffer();
+            continue;
+        }
+
+        switch (menunum) {
+        case 1: {
+            printf("입고 메뉴 실행(상품 갯수 조정 및 가격 설정)\n");
+            printf("상품 ID: ");
+            int product_id;
+            scanf("%d", &product_id);
+
+            if (product_id < 1 || product_id > MAX_PRODUCTS) {
+                printf("잘못된 상품 ID입니다.\n");
+                break;
+            }
+
+            printf("상품명 입력: ");
+            clear_input_buffer();
+            fgets(product_names[product_id - 1], MAX_NAME_LEN, stdin);
+            product_names[product_id - 1][strcspn(product_names[product_id - 1], "\n")] = '\0';
+
+            printf("입고량: ");
+            int incoming_stock;
+            scanf("%d", &incoming_stock);
+            stock[product_id - 1] += incoming_stock;
+            totalstock += incoming_stock;
+
+            printf("판매가격: ");
+            double price;
+            scanf("%lf", &price);
+            product_prices[product_id - 1] = price;
+
+            break;
+        }
+
+        case 2: {
+            printf("판매 메뉴 실행\n");
+            printf("상품 ID: ");
+            int product_id;
+            scanf("%d", &product_id);
+
+            if (product_id < 1 || product_id > MAX_PRODUCTS) {
+                printf("잘못된 상품 ID입니다.\n");
+                break;
+            }
+
+            printf("판매량: ");
+            int sale_quantity;
+            scanf("%d", &sale_quantity);
+            if (sale_quantity > stock[product_id - 1] - sold[product_id - 1]) {
+                printf("재고가 부족합니다.\n");
+            }
+            else {
+                sold[product_id - 1] += sale_quantity;
+                totalsold += sale_quantity;
+                total_sales_volume += sale_quantity * product_prices[product_id - 1];
+            }
+
+            break;
+        }
+
+        case 3: {
+            printf("개별상품 현황\n");
+            printf("상품 ID: ");
+            int product_id;
+            scanf("%d", &product_id);
+
+            if (product_id < 1 || product_id > MAX_PRODUCTS) {
+                printf("잘못된 상품 ID입니다.\n");
+                break;
+            }
+
+            if (strcmp(product_names[product_id - 1], "") == 0) { 
+                printf("해당 ID에 상품이 없습니다.\n");
+                break;
+            }
+
+            remaining[product_id - 1] = stock[product_id - 1] - sold[product_id - 1];
+            double total_sales_amount = sold[product_id - 1] * product_prices[product_id - 1];
+            printf("상품 ID: %d\n", product_id); 
+            printf("상품명: %s\n", product_names[product_id - 1]);
+            printf("재고량: %d\n", remaining[product_id - 1]);
+            printf("판매량: %d\n", sold[product_id - 1]);
+            printf("판매가격: ");
+            print_price(product_prices[product_id - 1]); 
+            printf("\n");
+            printf("총 판매금액: ");
+            print_price(total_sales_amount);
+            printf("\n");
+
+            sales_volume = (stock[product_id - 1] > 0) ? (double)sold[product_id - 1] / stock[product_id - 1] * 100 : 0.0;
+            printf("판매율: %.2f%%\n", sales_volume);
+
+            if (remaining[product_id - 1] < 3) {
+                printf("재고부족: 상품 ID %d (%s) 남은 재고량: %d\n", product_id, product_names[product_id - 1], remaining[product_id - 1]);
+            }
+
+            break;
+        }
+
+        case 4: {
+            printf("전체상품 현황\n");
+            int products_found = 0; 
+            int best_selling = sold[0];
+            int worst_selling = sold[0];
+
+            for (int i = 0; i < MAX_PRODUCTS; i++) {
+                if (strcmp(product_names[i], "") != 0) { 
+                    remaining[i] = stock[i] - sold[i];
+                    printf("상품 ID: %d, ", i + 1); 
+                    printf("상품명: %s, 재고량: %d, 판매량: %d, 판매가격: ", product_names[i], remaining[i], sold[i]);
+                    print_price(product_prices[i]);
+                    printf("\n");
+                    products_found = 1; 
+
+                    if (remaining[i] < 3) {
+                        printf("재고부족: 상품 ID %d (%s) 남은 재고량: %d\n", i + 1, product_names[i], remaining[i]);
+                    }
+
+                    if (sold[i] > best_selling) {
+                        best_selling = sold[i];
+                    }
+                    if (sold[i] < worst_selling) {
+                        worst_selling = sold[i];
+                    }
+                }
+            }
+
+            printf("가장 많이 판매된 상품 ID : ID ");
+            for (int i = 0; i < MAX_PRODUCTS; i++) {
+                if (sold[i] == best_selling) {
+                    printf("%d ", i + 1);
+                }
+            }
+            printf("판매량 %d\n", best_selling);
+
+            printf("가장 적게 판매된 상품 ID : ID ");
+            for (int i = 0; i < MAX_PRODUCTS; i++) {
+                if (sold[i] == worst_selling) {
+                    printf("%d ", i + 1);
+                }
+            }
+            printf("판매량 %d\n", worst_selling);
+
+            if (!products_found) {
+                printf("등록된 상품이 없습니다.\n");
+            }
+            printf("전체상품 판매금액 현황\n");
+
+            for (int i = 0; i < MAX_PRODUCTS; i++) {
+                if (strcmp(product_names[i], "") == 0) { 
+                    continue;
+                }
+
+                double total_sales_amount = sold[i] * product_prices[i];
+
+                printf("ID[%d] 총 판매금액: ", i + 1);
+                print_price(total_sales_amount); 
+                printf("\n");
+            }
+            printf("총 판매금액: ");
+            print_price(total_sales_volume); 
+            printf("\n");
+            break;
+        }
+
+        case 5:
+            printf("프로그램을 종료합니다.\n");
+            break;
+
+        default:
+            printf("잘못된 메뉴 선택입니다. 다시 시도하세요.\n");
+            break;
+        }
+    } while (menunum != 5);
+
+    return 0;
+}
